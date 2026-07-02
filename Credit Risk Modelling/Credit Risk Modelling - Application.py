@@ -3,8 +3,6 @@ import pandas as pd
 import joblib
 
 model = joblib.load('Credit Risk Modelling - Decision Tree Model.pkl')
-encoders = {col: joblib.load(f'Credit Risk Modelling - Label Encoder ({col}).pkl') 
-            for col in ['Sex', 'Housing', 'Saving accounts', 'Checking account']}
 
 st.title('Credit Risk Prediction Application')
 st.write('Enter applicant information to predict if credit risk is good or bad')
@@ -16,21 +14,27 @@ housing = st.selectbox('Housing', ['own', 'rent', 'free'])
 saving_accounts = st.selectbox('Saving Accounts', ['little', 'moderate', 'quite rich', 'rich'])
 checking_account = st.selectbox('Checking Accounts', ['little', 'moderate', 'rich'])
 credit_amount = st.number_input('Credit Amount', min_value = 0, value = 100)
-duration = st.number_input('Duration (Months)', min_value = 1, default = 12)
+
+sex_map = {'male': 1, 'female': 0}
+housing_map = {'own': 0, 'rent': 1, 'free': 2}
+saving_map = {'little': 0, 'moderate': 1, 'quite rich': 2, 'rich': 3}
+checking_map = {'little': 0, 'moderate': 1, 'rich': 2}
 
 input_df = pd.DataFrame({'Age': [age],
-                         'Sex': [encoders['Sex'].transform([sex])[0]],
+                         'Sex': [sex_map[sex]],
                          'Job': [job],
-                         'Housing': [encoders['Housing'].transform([housing])[0]],
-                         'Saving accounts': [encoders['Saving accounts'].transform([saving_accounts])[0]],
-                         'Checking account': [encoders['Checking account'].transform([checking_account])[0]],
-                         'Credit Amount': [credit_amount],
-                         'Duration': [duration]})
-                        
+                         'Housing': [housing_map[housing]],
+                         'Saving accounts': [saving_map[saving_accounts]],
+                         'Checking account': [checking_map[checking_account]],
+                         'Credit amount': [credit_amount]})
+
 if st.button('Predict Risk'):
+    
     prediction = model.predict(input_df)[0]
+
     if prediction == 1:
         st.success('The predicted credit risk is: **Good**')
+        
     else:
         st.error('The predicted credit risk is: **Bad**')
     

@@ -41,7 +41,7 @@ if submitted:
     input_data['smoker'] = le_smoker.transform(input_data['smoker'])
 
     numerical_cols = ['age', 'bmi', 'bloodpressure', 'children']
-    input_data[numerical_cols] = scaler.transform[input_data[numerical_cols])
+    input_data[numerical_cols] = scaler.transform(input_data[numerical_cols])
 
     prediction = model.predict(input_data)[0]
 
